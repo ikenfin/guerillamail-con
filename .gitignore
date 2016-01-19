@@ -1,0 +1,16 @@
+CMakeFiles
+CMakeFiles/*
+Makefile
+CMakeCache.txt
+cmake_install.cmake
+install_manifest.txt
+cmake_uninstall.cmake*
+!cmake_uninstall.cmake.in
+*.o
+*.a
+*.so
+bin
+bin/*
+debug
+debug/*
+*.odt
