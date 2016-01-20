@@ -12,11 +12,11 @@
 #define EMPTY_CMD_PARAM -99
 
 /* 10 minutes */
-#define GUERILLAMAIL_CHECK_EXPIRED_TIME 600000000
+#define GUERILLAMAIL_CHECKER_DELAY 600000000
 
 /*
 	Pthread worker function
-	Run checker every GUERILLAMAIL_CHECK_EXPIRED_TIME microseconds
+	Run checker every GUERILLAMAIL_CHECKER_DELAY microseconds
 */
 void *guerillamail_background_updater(void *arg)
 {
@@ -25,7 +25,7 @@ void *guerillamail_background_updater(void *arg)
 	while(TRUE) {
 		/* It check to instances will be active in user session */
 		__guerillamail_expired_checker(instances);
-		usleep(12000000);
+		usleep(GUERILLAMAIL_CHECKER_DELAY);
 	}
 }
 
@@ -55,7 +55,6 @@ int console_main(int argc, char **argv)
 	pthread_t pth;
 
 	pthread_create(&pth, NULL, guerillamail_background_updater, instances);
-	pthread_attr_setdetachstate(pth, PTHREAD_CREATE_DETACHED);
 
 	/* main menu loop */
 	while(menu_loop == 1) {

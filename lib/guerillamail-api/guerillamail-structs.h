@@ -23,33 +23,6 @@ typedef enum API_CALL_ID
 } api_call;
 
 /*
-	Mailbox structure
-*/
-typedef struct GUERILLA_API_INSTANCE {
-	char *email_addr;
-	unsigned email_timestamp;
-	char *sid_token;
-	int auto_increase;
-	char *cookies_file;
-	api_call func;
-	char *last_result;
-	int last_email_id;
-	MailList *emails;
-	int emails_count;
-} GuerillaApiInstance;
-
-/*
-	Mailboxes vector
-*/
-typedef struct
-{
-	int size;
-	int capacity;
-	int current_instance;
-	GuerillaApiInstance **data;
-} ApiInstancesVector;
-
-/*
 	Email message structure
 */
 typedef struct
@@ -82,6 +55,33 @@ typedef struct
 	int last_email_id;
 	Mail **data;
 } MailList;
+
+/*
+	Mailbox structure
+*/
+typedef struct GUERILLA_API_INSTANCE {
+	char *email_addr;
+	unsigned email_timestamp;
+	char *sid_token;
+	int auto_increase;
+	char *cookies_file;
+	api_call func;
+	char *last_result;
+	int last_email_id;
+	MailList *emails;
+	int emails_count;
+} GuerillaApiInstance;
+
+/*
+	Mailboxes vector
+*/
+typedef struct
+{
+	int size;
+	int capacity;
+	int current_instance;
+	GuerillaApiInstance **data;
+} ApiInstancesVector;
 
 /*
 	Helper struct for process curl response

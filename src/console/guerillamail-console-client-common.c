@@ -139,7 +139,6 @@ void __guerillamail_expired_checker(ApiInstancesVector *instances)
 	int i;
 
 	if(instances == NULL || instances->size == 0) {
-		fprintf(stderr, "%s\n", "Instances is null");
 		return;
 	}
 
