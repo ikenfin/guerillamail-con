@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 2.6)
 
 set(CMAKE_BINARY_DIR bin)
 set(INSTALL_BIN_DIR bin)
-set(INSTALL_LIB_DIR lib)
+set(INSTALL_LIB_DIR "lib")
 
 set(DEBUG_DIR debug)
 
@@ -21,6 +21,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 else()
 	message("RELEASE BUILDING")
 	message("make install will need root privileges!")
+	set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 endif()
 
 add_subdirectory(lib)
