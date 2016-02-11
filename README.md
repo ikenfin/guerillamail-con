@@ -23,6 +23,15 @@ CMAKE OPTIONS:
 	cd debug && ./guerillamail
 ```
 
+```sh
+	#generate makefiles for release
+	cmake . -DCMAKE_BUILD_TYPE=Release
+	make
+	sudo make install
+
+	# to remove use `sudo make uninstall`
+```
+
 ## Console mode
 
 Type `h` key to get help.
