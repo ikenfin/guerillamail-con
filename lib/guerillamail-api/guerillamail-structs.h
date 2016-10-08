@@ -70,6 +70,7 @@ typedef struct GUERILLA_API_INSTANCE {
 	int last_email_id;
 	MailList *emails;
 	int emails_count;
+	char active;
 } GuerillaApiInstance;
 
 /*

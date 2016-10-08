@@ -39,6 +39,7 @@ Mail * create_mail()
 void free_mail(Mail *mail)
 {
 	if(mail != NULL) {
+		printf("freeing from: %s\n", mail->mail_from);
 		free(mail->mail_from);
 		free(mail->mail_date);
 		free(mail->reply_to);
@@ -93,6 +94,8 @@ GuerillaApiInstance * create_guerilla_api_instance()
 	instance->emails = create_maillist();
 	instance->emails_count = 0;
 
+	instance->active = TRUE;
+
 	return instance;
 }
 
@@ -102,11 +105,11 @@ void free_guerilla_api_instance(GuerillaApiInstance *instance)
 	if(instance == NULL)
 		return;
 
-	if(instance->email_addr != NULL)
-		free(instance->email_addr);
+	// if(instance->email_addr != NULL)
+	free(instance->email_addr);
 
-	if(instance->last_result != NULL)
-		free(instance->last_result);
+	// if(instance->last_result != NULL)
+	free(instance->last_result);
 
 	if(instance->cookies_file != NULL) {
 		if(file_exists(instance->cookies_file)) {
@@ -115,7 +118,11 @@ void free_guerilla_api_instance(GuerillaApiInstance *instance)
 		free(instance->cookies_file);
 	}
 
+	free(instance->sid_token);
+
 	free_maillist(instance->emails);
+	
+	instance->active = FALSE;
 	
 	free(instance);
 }

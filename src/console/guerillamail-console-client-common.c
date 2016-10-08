@@ -44,7 +44,10 @@ void wrong_cmd_param_error(char cmd)
 void forget_me_callback(GuerillaApiInstance *instance)
 {
 	free_guerilla_api_instance(instance);
+	printf("%s\n", "manual setting isntance to NULL!!!");
+	instance = NULL;
 	printf("%s\n", "Ok, forgetted.");
+	printf("now instance is %s\n", instance == NULL ? "NULL" : "WTF?");
 }
 
 /*

@@ -86,6 +86,11 @@ int console_main(int argc, char **argv)
 				instance->func = FORGET_ME;
 				query_api(instance, &forget_me_callback);
 			break;
+			case 'g':
+				printf("%s\n", "SET_EMAIL_ADDRESS");
+				instance->func = SET_EMAIL_ADDRESS;
+				query_api(instance, &get_email_address_callback);
+			break;
 			/* check for new emails */
 			case 'c':
 				if(instance == NULL) {
@@ -147,9 +152,14 @@ int console_main(int argc, char **argv)
 				}
 				else {
 					for(j = 0; j < instances->size; j++) {
-						// if(instances->data[j]->email_addr == NULL)
+						// printf("another check: %s\n", instances.data[j] == NULL ? "IS NULL" : "FUCK!");
+						// if(instances->data[j] == NULL)
 						// 	continue;
-						printf("[%s%d] %s \n", ((j == pos) ? "*" : ""), j, instances->data[j]->email_addr);
+						// else {
+						// 	printf("Not NULL, SO IS %s\n", instances->data[j]);
+						// }
+						if(instances->data[j]->active == TRUE) 
+							printf("[%s%d] %s \n", ((j == pos) ? "*" : ""), j, instances->data[j]->email_addr);
 					}
 				}
 			break;

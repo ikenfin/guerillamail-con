@@ -30,17 +30,32 @@ size_t curl_to_string(void *ptr, size_t size, size_t nmemb, void *data)
 }
 
 /* strings concat implementation */
-char * api_strcat(char *a, char *b)
+char * api_strcat(char *a, const char *b)
 {
-	char *buffer = malloc(strlen(a) + strlen(b) + 1);
+	if(b == NULL) {
+		fprintf(stderr, "%s \n", "Parameter b cannot be NULL, only string!");
+		exit(0);
+	}
+
+	int a_size = a != NULL ? sizeof(char) * strlen(a) : sizeof(NULL);
+	int b_size = b != NULL ? sizeof(char) * strlen(b) : sizeof(NULL);
+
+	char *buffer = malloc(a_size + b_size + 1);
 
 	if(buffer == NULL) {
 		fprintf(stderr, "%s \n", "Out of memory!");
 	}
 	else {
-		strcpy(buffer, a);
-		strcat(buffer, b);
+		if(a != NULL) {
+			strcpy(buffer, a);
+			strcat(buffer, b);
+		}
+		else {
+			strcpy(buffer, b);
+		}
 	}
+
+	free(a);
 
 	return buffer;
 }
@@ -84,8 +99,8 @@ void fetch_email_callback(GuerillaApiInstance *instance)
 	struct json_object *json_mail_date;
 	struct json_object *json_mail_body;
 
-	// printf("%s \n", instance->last_result);
 	new_obj = json_tokener_parse(instance->last_result);
+
 	Mail *mail = find_mail_by_id(instance, instance->last_email_id);
 
 	if(mail == NULL) {
@@ -93,10 +108,10 @@ void fetch_email_callback(GuerillaApiInstance *instance)
 		append_mail_to_list(instance->emails, mail);
 	}
 
-	if(json_object_object_get_ex(new_obj, "mail_from", &json_mail_from)) {
+	if(mail->mail_from == NULL && json_object_object_get_ex(new_obj, "mail_from", &json_mail_from)) {
 		mail->mail_from = strdup((char *) json_object_get_string(json_mail_from));
 	}
-	if(json_object_object_get_ex(new_obj, "mail_subject", &json_mail_subject)) {
+	if(mail->mail_subject == NULL && json_object_object_get_ex(new_obj, "mail_subject", &json_mail_subject)) {
 		mail->mail_subject = strdup((char *) json_object_get_string(json_mail_subject));
 	}
 	if(json_object_object_get_ex(new_obj, "mail_date", &json_mail_date)) {
@@ -135,13 +150,15 @@ void parse_mail_list(GuerillaApiInstance *instance, int update)
 	
 	if(list_exists == FALSE) {
 		fprintf(stderr, "%s \n", "List not found!");
-		exit(1);
+		return;
 	}
 
 	count = (int) json_object_array_length(list);
 
-	if(count == 0)
+	if(count == 0) {
+		json_object_put(new_obj);
 		return;
+	}
 
 	int mail_id = -1;
 
@@ -193,6 +210,8 @@ void parse_mail_list(GuerillaApiInstance *instance, int update)
 	}
 
 	instance->emails_count = instance->emails->size;
+
+	json_object_put(new_obj);
 }
 
 /* send query to guerillamail api via curl */
@@ -208,26 +227,28 @@ int query_api(GuerillaApiInstance *instance, void (*callback)(GuerillaApiInstanc
 	char *url, *url_part;
 	char buf[12];
 
+	url = api_strcat(NULL, API_URL);
+
 	switch(instance->func) {
 		case GET_EMAIL_ADDRESS:
-			url = api_strcat(API_URL, "?f=get_email_address");
+			url = api_strcat(url, "?f=get_email_address");
 			break;
 		/* restore session*/
 		case SET_EMAIL_ADDRESS:
-			url = api_strcat(API_URL, "?f=set_email_address&email_user=");
+			url = api_strcat(url, "?f=set_email_address&email_user=");
 			url = api_strcat(url, instance->email_addr);
 			break;
 		case FORGET_ME:
-			url = api_strcat(API_URL, "?f=forget_me&email_addr=");
+			url = api_strcat(url, "?f=forget_me&email_addr=");
 			url = api_strcat(url, instance->email_addr);
 			break;
 		case CHECK_EMAIL:
-			url = api_strcat(API_URL, "?f=check_email&seq=");
+			url = api_strcat(url, "?f=check_email&seq=");
 			sprintf(buf, "%d", instance->emails->last_email_id);
 			url = api_strcat(url, buf);
 			break;
 		case GET_EMAIL_LIST:
-			url = api_strcat(API_URL, "?f=get_email_list&offset=0");
+			url = api_strcat(url, "?f=get_email_list&offset=0");
 			break;
 		case FETCH_EMAIL:
 
@@ -236,12 +257,11 @@ int query_api(GuerillaApiInstance *instance, void (*callback)(GuerillaApiInstanc
 				return 0;
 			}
 
-			url_part = api_strcat(API_URL, "?f=fetch_email&email_id=");
+			url = api_strcat(url, "?f=fetch_email&email_id=");
 
 			sprintf(buf, "%d", instance->last_email_id);
-			url = api_strcat(url_part, buf);
+			url = api_strcat(url, buf);
 
-			free(url_part);
 			break;
 	}
 
