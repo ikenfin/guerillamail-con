@@ -1,11 +1,12 @@
 #include <stdlib.h>
-#include <json/json.h>
+#include <json-c/json.h>
 #include <string.h>
 #include <time.h>
 
 #include "guerillamail-api/guerillamail-structs.h"
 #include "guerillamail-api/guerillamail-api.h"
 #include "guerillamail-console-client.h"
+#include "dbg/debug.h"
 
 #define SECS_IN_17_MINUTES 1020
 
@@ -44,10 +45,10 @@ void wrong_cmd_param_error(char cmd)
 void forget_me_callback(GuerillaApiInstance *instance)
 {
 	free_guerilla_api_instance(instance);
-	printf("%s\n", "manual setting isntance to NULL!!!");
+	DEBUG_PRINT("%s\n", "manual setting isntance to NULL!!!");
 	instance = NULL;
 	printf("%s\n", "Ok, forgetted.");
-	printf("now instance is %s\n", instance == NULL ? "NULL" : "WTF?");
+	DEBUG_PRINT("now instance is %s\n", instance == NULL ? "NULL" : "WTF?");
 }
 
 /*

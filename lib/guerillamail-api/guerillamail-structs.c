@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include "guerillamail-structs.h"
+#include "dbg/debug.h"
 
 /* Main guerillamail api structures control functions: */
 
@@ -39,7 +40,7 @@ Mail * create_mail()
 void free_mail(Mail *mail)
 {
 	if(mail != NULL) {
-		printf("freeing from: %s\n", mail->mail_from);
+		// printf("freeing from: %s\n", mail->mail_from);
 		free(mail->mail_from);
 		free(mail->mail_date);
 		free(mail->reply_to);
@@ -67,6 +68,10 @@ MailList * create_maillist()
 /* Destroy MailList and free memory */
 void free_maillist(MailList *list)
 {
+	if(list == NULL) {
+		return;
+	}
+
 	int i;
 
 	for(i = (list->size - 1); i >= 0; i--) {
@@ -106,10 +111,10 @@ void free_guerilla_api_instance(GuerillaApiInstance *instance)
 		return;
 
 	// if(instance->email_addr != NULL)
-	free(instance->email_addr);
+		free(instance->email_addr);
 
 	// if(instance->last_result != NULL)
-	free(instance->last_result);
+		free(instance->last_result);
 
 	if(instance->cookies_file != NULL) {
 		if(file_exists(instance->cookies_file)) {
@@ -118,6 +123,7 @@ void free_guerilla_api_instance(GuerillaApiInstance *instance)
 		free(instance->cookies_file);
 	}
 
+	// if(instance->sid_token != NULL)
 	free(instance->sid_token);
 
 	free_maillist(instance->emails);
@@ -172,7 +178,9 @@ void free_instances(ApiInstancesVector *instances)
 	int i;
 
 	if(instances->data != NULL) {
-		for(i = (instances->size - 1); i > 0; i--) {
+		for(i = 0; i < instances->size; i++) {
+			DEBUG_PRINT("%d\n", instances->size);
+			DEBUG_PRINT("%d ISNULL == %d\n", i, instances->data[i] == NULL);
 			free_guerilla_api_instance(instances->data[i]);
 		}
 		free(instances->data);

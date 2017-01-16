@@ -1,9 +1,10 @@
 #include <stdlib.h>
 #include <string.h>
-#include <json/json.h>
+#include <json-c/json.h>
 #include <curl/curl.h>
 
 #include "guerillamail-api.h"
+#include "dbg/debug.h"
 
 /* curl response handler callback */
 size_t curl_to_string(void *ptr, size_t size, size_t nmemb, void *data)
@@ -149,6 +150,7 @@ void parse_mail_list(GuerillaApiInstance *instance, int update)
 	list_exists = json_object_object_get_ex(new_obj, "list", &list);
 	
 	if(list_exists == FALSE) {
+		DEBUG_PRINT("%s \n", instance->last_result);
 		fprintf(stderr, "%s \n", "List not found!");
 		return;
 	}
@@ -266,13 +268,13 @@ int query_api(GuerillaApiInstance *instance, void (*callback)(GuerillaApiInstanc
 	}
 
 	if(instance->sid_token != NULL) {
-		printf("SID: %s\n", instance->sid_token);
+		DEBUG_PRINT("SID: %s\n", instance->sid_token);
 		url = api_strcat(url, "&sid_token=");
 		url = api_strcat(url, instance->sid_token);
 	}
 
 	// curl_global_init(CURL_GLOBAL_ALL);
-	printf("%s\n", url);
+	DEBUG_PRINT("%s\n", url);
 	curl = curl_easy_init();
 	curl_easy_setopt(curl, CURLOPT_URL, url);
 	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);

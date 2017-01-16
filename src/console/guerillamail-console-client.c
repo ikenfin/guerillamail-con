@@ -8,11 +8,15 @@
 #include "guerillamail-console-client.h"
 #include "guerillamail-console-client-common.h"
 
+#include "dbg/debug.h"
+
 #define COMMAND_MAX 1
 #define EMPTY_CMD_PARAM -99
 
 /* 10 minutes */
 #define GUERILLAMAIL_CHECKER_DELAY 600000000
+
+static pthread_t MAIN_THREAD;
 
 /*
 	Pthread worker function
@@ -20,6 +24,7 @@
 */
 void *guerillamail_background_updater(void *arg)
 {
+	pthread_join(MAIN_THREAD, NULL);
 	ApiInstancesVector *instances = (ApiInstancesVector*) arg;
 
 	while(TRUE) {
@@ -34,6 +39,8 @@ void *guerillamail_background_updater(void *arg)
 */
 int console_main(int argc, char **argv)
 {
+	MAIN_THREAD = pthread_self();
+
 	ApiInstancesVector *instances = create_instances(); 
 	
 	GuerillaApiInstance *instance;
@@ -87,7 +94,7 @@ int console_main(int argc, char **argv)
 				query_api(instance, &forget_me_callback);
 			break;
 			case 'g':
-				printf("%s\n", "SET_EMAIL_ADDRESS");
+				DEBUG_PRINT("%s\n", "SET_EMAIL_ADDRESS");
 				instance->func = SET_EMAIL_ADDRESS;
 				query_api(instance, &get_email_address_callback);
 			break;
@@ -190,7 +197,6 @@ int console_main(int argc, char **argv)
 		}
 	}
 
-	free_guerilla_api_instance(instance);
 	free_instances(instances);
 
 	return 0;
