@@ -15,5 +15,5 @@ add_definitions(-g)
 
 add_executable(${PROJECT_PATH} ${EXEC_SRC})
 target_link_libraries(${PROJECT_PATH} guerillamail-api)
-target_link_libraries(${PROJECT_PATH} curl json pthread)
+target_link_libraries(${PROJECT_PATH} curl json-c pthread)
 install(TARGETS ${PROJECT_PATH} DESTINATION ${INSTALL_BIN_DIR})
