@@ -9,6 +9,8 @@ set(INSTALL_LIB_DIR "lib")
 
 set(DEBUG_DIR debug)
 
+set(IS_DEBUG_BUILD 0)
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	message("DEBUG BUILDING")
 	message("BUILD PATH - ${CMAKE_CURRENT_LIST_DIR}/${DEBUG_DIR}")
@@ -18,12 +20,20 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	set(CMAKE_SKIP_BUILD_RPATH TRUE)
 	set(BUILD_WITH_INSTALL_RPATH TRUE)
 	set(CMAKE_INSTALL_RPATH ${CMAKE_CURRENT_LIST_DIR}/${DEBUG_DIR})
+	set(IS_DEBUG_BUILD 1)
 else()
 	message("RELEASE BUILDING")
 	message("make install will need root privileges!")
 	set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 endif()
 
+configure_file (
+	"${CMAKE_CURRENT_SOURCE_DIR}/debug-helper/dbg/debug.h.in"
+	"${CMAKE_CURRENT_SOURCE_DIR}/debug-helper/dbg/debug.h"
+)
+
+include_directories(${guerillamail_SOURCE_DIR}/debug-helper)
+link_directories(${guerillamail_SOURCE_DIR}/debug-helper)
 add_subdirectory(lib)
 add_subdirectory(src)
 
