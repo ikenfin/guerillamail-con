@@ -304,3 +304,22 @@ int query_api(GuerillaApiInstance *instance, void (*callback)(GuerillaApiInstanc
 	free(rsp.data);
 
 }
+
+// dumping a GUERILLA_API_INSTANCE to a file is not implemented, which makes this
+// function useless for now
+struct GUERILLA_API_INSTANCE read_instance_obj_from_file(const char *filename)
+{
+	struct GUERILLA_API_INSTANCE instance;
+	struct GUERILLA_API_INSTANCE *i = &instance;
+
+	FILE *f = fopen(filename, "rb");
+	fscanf(f, "%s:%u:%s:%d:%s:5s:%d:%d:%c",
+		&i->email_addr, &i->email_timestamp,
+		&i->sid_token, &i->auto_increase,
+		&i->cookies_file, &i->last_result,
+		&i->last_email_id, &i->emails_count,
+		&i->active);
+	fclose(f);
+
+	return instance;
+}
