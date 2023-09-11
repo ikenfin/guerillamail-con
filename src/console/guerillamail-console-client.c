@@ -71,7 +71,11 @@ int console_main(int argc, char **argv)
 		
 		printf("[%s]:$ ", instance == NULL ? "guerillamail" : instance->email_addr);
 
-		fgets(input, LINE_MAX, stdin);
+		if (fgets(input, LINE_MAX, stdin) == NULL)
+		{
+			menu_loop = 0;
+			continue;
+		}
 
 		cmd_param = EMPTY_CMD_PARAM;
 
